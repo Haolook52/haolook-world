@@ -1,10 +1,27 @@
-$root = (Get-Location).Path
-$port = 9090
+$root = $PSScriptRoot
+$listener = $null
+$port = 0
 
-$listener = [System.Net.HttpListener]::new()
-$listener.Prefixes.Add("http://localhost:$port/")
-$listener.Start()
+foreach ($p in 9100..9120) {
+    $tryListener = [System.Net.HttpListener]::new()
+    $tryListener.Prefixes.Add("http://localhost:$p/")
+    try {
+        $tryListener.Start()
+        $listener = $tryListener
+        $port = $p
+        break
+    } catch {
+        continue
+    }
+}
 
+if ($null -eq $listener) {
+    Write-Host 'NO FREE PORT'
+    exit 1
+}
+
+$portFile = Join-Path $env:TEMP 'haolook-port.txt'
+$port | Out-File -FilePath $portFile -Encoding ascii
 Write-Host "Server running at http://localhost:$port/"
 
 function Get-ContentType($ext) {
