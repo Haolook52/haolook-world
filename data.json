@@ -1,1 +1,32 @@
-﻿{"travel":[],"series":[]}
+{
+    "travel":  [
+
+               ],
+    "series":  [
+                   {
+                       "name":  "湖北宜昌",
+                       "folder":  "photos/系列作品/湖北宜昌",
+                       "images":  [
+                                      "001.webp",
+                                      "002.webp",
+                                      "003.webp",
+                                      "004.webp",
+                                      "005.webp",
+                                      "006.webp"
+                                  ]
+                   },
+                   {
+                       "name":  "人物",
+                       "folder":  "photos/系列作品/人物",
+                       "images":  [
+                                      "001.webp",
+                                      "002.webp",
+                                      "003.webp",
+                                      "004.webp",
+                                      "005.webp",
+                                      "006.webp",
+                                      "007.webp"
+                                  ]
+                   }
+               ]
+}

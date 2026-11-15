@@ -42,7 +42,7 @@ function Get-ContentType($ext) {
 
 while ($listener.IsListening) {
     $context = $listener.GetContext()
-    $url = $context.Request.Url.AbsolutePath
+    $url = [System.Uri]::UnescapeDataString($context.Request.Url.AbsolutePath)
     if ($url -eq "/") { $url = "/index.html" }
     $path = Join-Path $root ($url -replace "/", "\")
 
