@@ -25,7 +25,20 @@
                                       "004.webp",
                                       "005.webp",
                                       "006.webp",
-                                      "007.webp"
+                                      "007.webp",
+                                      "008.webp",
+                                      "009.webp",
+                                      "010.webp"
+                                  ]
+                   },
+                   {
+                       "name":  "山东日照",
+                       "folder":  "photos/系列作品/山东日照",
+                       "images":  [
+                                      "蹬山.webp",
+                                      "蹬山金銮殿.webp",
+                                      "天台山.webp",
+                                      "诸城电视塔.webp"
                                   ]
                    }
                ]
