@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 $dir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $port = 9000
 
@@ -14,12 +14,23 @@ public class PhotoServer9000
     public static void Run(string root, int port)
     {
         HttpListener listener = new HttpListener();
-        listener.Prefixes.Add("http://localhost:" + port + "/");
+        // 监听所有网卡，手机等局域网设备可通过本机 IP 访问
+        listener.Prefixes.Add("http://+:" + port + "/");
         listener.Start();
         Console.WriteLine("============================================");
         Console.WriteLine("  Haolook World - Photography Portfolio");
-        Console.WriteLine("  Local URL: http://localhost:" + port + "/");
+        Console.WriteLine("  Local URL:   http://localhost:" + port + "/");
         Console.WriteLine("  Root: " + root);
+        Console.WriteLine("--------------------------------------------");
+        Console.WriteLine("  LAN URL (手机访问用以下地址):");
+        foreach (IPAddress ip in Dns.GetHostAddresses(Dns.GetHostName()))
+        {
+            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork
+                && !IPAddress.IsLoopback(ip))
+            {
+                Console.WriteLine("    http://" + ip + ":" + port + "/");
+            }
+        }
         Console.WriteLine("============================================");
 
         while (true)
@@ -74,4 +85,20 @@ public class PhotoServer9000
 '@
 
 Add-Type -TypeDefinition $code -Language CSharp
-[PhotoServer9000]::Run($dir, $port)
+
+$isAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+if (-not $isAdmin) {
+    Write-Host "提示: 当前非管理员运行。若启动报 '拒绝访问'(HttpListener 需要 URL 保留权限)，" -ForegroundColor Yellow
+    Write-Host "      请右键 PowerShell 选择『以管理员身份运行』后重新执行本脚本。" -ForegroundColor Yellow
+}
+
+try {
+    [PhotoServer9000]::Run($dir, $port)
+} catch [System.Net.HttpListenerException] {
+    Write-Host ""
+    Write-Host "启动失败: 无法监听 http://+:$port/ (错误: $($_.Exception.Message))" -ForegroundColor Red
+    Write-Host "解决办法(任选其一):" -ForegroundColor Yellow
+    Write-Host "  1. 以管理员身份运行本脚本"
+    Write-Host "  2. 或者在管理员 PowerShell 中执行: netsh http add urlacl url=http://+:$port/ user=Everyone"
+    exit 1
+}
